@@ -62,12 +62,14 @@ function formatCommentsData(rawCommentsData, articlesData) {
   const formattedCommentsData = [];
   artilcesDictionary = propDict(articlesData, "title", "article_id");
 
-  commentsAddedIDAndTime = rawCommentsData.map((comment) => {
-    comment["article_id"] = artilcesDictionary[comment.article_title];
-    delete comment.article_title;
-
-    return convertTimestampToDate(comment);
-  });
+  commentsAddedIDAndTime = JSON.parse(JSON.stringify(rawCommentsData)).map(
+    (comment) => {
+      comment["article_id"] = artilcesDictionary[comment.article_title];
+      delete comment.article_title;
+      comment = convertTimestampToDate(comment);
+      return comment;
+    }
+  );
 
   for (const commentData of commentsAddedIDAndTime) {
     formattedCommentsData.push([

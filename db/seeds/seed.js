@@ -140,7 +140,7 @@ function insertArticlesData(rawArticlesData) {
   );
 }
 function insertCommentsData(rawCommentsData, insertedArticleData) {
-  // console.log(insertedArticleData);
+  console.log(insertedArticleData);
   // console.log(rawCommentsData);
   const formattedCommentsData = formatCommentsData(
     rawCommentsData,
