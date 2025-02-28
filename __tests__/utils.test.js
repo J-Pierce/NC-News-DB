@@ -382,7 +382,6 @@ describe("Test formatArticlesData", () => {
       },
     ];
     const output = formatArticlesData(input);
-    console.log(output);
     expect(output).toEqual([
       [
         "Living in the shadow of a great man",
