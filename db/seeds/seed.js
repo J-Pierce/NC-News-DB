@@ -102,7 +102,6 @@ function createComments() {
 
 function insertTopicsData(rawTopicsData) {
   const formattedTopicsData = formatTopicsData(rawTopicsData);
-  //console.log("Formatted topics data", formattedTopicsData);
   return db.query(
     format(
       `INSERT INTO topics
@@ -115,7 +114,6 @@ function insertTopicsData(rawTopicsData) {
 }
 function insertUsersData(rawUsersData) {
   const formattedUsersData = formatUsersData(rawUsersData);
-  //console.log("Formatted user Data: ", formattedUsersData);
   return db.query(
     format(
       `INSERT INTO users
@@ -140,8 +138,6 @@ function insertArticlesData(rawArticlesData) {
   );
 }
 function insertCommentsData(rawCommentsData, insertedArticleData) {
-  console.log(insertedArticleData);
-  // console.log(rawCommentsData);
   const formattedCommentsData = formatCommentsData(
     rawCommentsData,
     insertedArticleData
