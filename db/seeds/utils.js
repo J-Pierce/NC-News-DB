@@ -40,46 +40,32 @@ function formatUsersData(rawUsersData) {
 
 function formatArticlesData(rawArticlesData) {
   const formattedArticlesData = [];
-  const articlesWithTime = rawArticlesData.map((article) => {
-    return convertTimestampToDate(article);
-  });
-
-  for (const articleData of articlesWithTime) {
+  rawArticlesData.map((article) => {
     formattedArticlesData.push([
-      articleData.title,
-      articleData.topic,
-      articleData.author,
-      articleData.body,
-      articleData.created_at,
-      articleData.votes,
-      articleData.article_img_url,
+      article.title,
+      article.topic,
+      article.author,
+      article.body,
+      convertTimestampToDate(article).created_at,
+      article.votes,
+      article.article_img_url,
     ]);
-  }
+  });
   return formattedArticlesData;
 }
 
 function formatCommentsData(rawCommentsData, articlesData) {
   const formattedCommentsData = [];
   artilcesDictionary = propDict(articlesData, "title", "article_id");
-
-  commentsAddedIDAndTime = JSON.parse(JSON.stringify(rawCommentsData)).map(
-    (comment) => {
-      comment["article_id"] = artilcesDictionary[comment.article_title];
-      delete comment.article_title;
-      comment = convertTimestampToDate(comment);
-      return comment;
-    }
-  );
-
-  for (const commentData of commentsAddedIDAndTime) {
+  rawCommentsData.map((comment) => {
     formattedCommentsData.push([
-      commentData.article_id,
-      commentData.body,
-      commentData.votes,
-      commentData.author,
-      commentData.created_at,
+      artilcesDictionary[comment.article_title],
+      comment.body,
+      comment.votes,
+      comment.author,
+      convertTimestampToDate(comment).created_at,
     ]);
-  }
+  });
   return formattedCommentsData;
 }
 exports.convertTimestampToDate = convertTimestampToDate;
