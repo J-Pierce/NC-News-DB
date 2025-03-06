@@ -59,14 +59,13 @@ describe("GET: /api/users", () => {
   });
 });
 
-xdescribe("GET: /api/articles", () => {
+describe("GET: /api/articles", () => {
   test("200: responds with the articles objects with each article having the correct properties", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         const articles = body.articles;
-        //console.log(articles);
         articles.forEach((article) => {
           const {
             article_id,
@@ -93,25 +92,19 @@ xdescribe("GET: /api/articles", () => {
     return request(app)
       .get("/api/articles?author=rogersop")
       .expect(200)
-      .then(({ body }) => {
-        console.log("author test: ", body);
-      });
+      .then(({ body }) => {});
   });
   test("200: by topic", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
-      .then(({ body }) => {
-        console.log("topic test: ", body);
-      });
+      .then(({ body }) => {});
   });
   test("200: by order", () => {
     return request(app)
       .get("/api/articles?order=title")
       .expect(200)
-      .then(({ body }) => {
-        console.log("order test: ", body);
-      });
+      .then(({ body }) => {});
   });
 });
 

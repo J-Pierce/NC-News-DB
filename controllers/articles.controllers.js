@@ -6,32 +6,30 @@ const {
   selectArticlesByOrder,
 } = require("../models/index.models");
 
-const getArticles = (request, response) => {
+exports.getArticles = (request, response) => {
   const query = request.query;
   if (query.author) {
-    selectArticlesByAuthor(query.author).then(({ rows }) => {
+    return selectArticlesByAuthor(query.author).then(({ rows }) => {
       response.status(200).send({ articles: rows });
     });
   } else if (query.topic) {
-    selectArticlesByTopic(query.topic).then(({ rows }) => {
+    return selectArticlesByTopic(query.topic).then(({ rows }) => {
       response.status(200).send({ articles: rows });
     });
   } else if (query.order) {
-    selectArticlesByOrder(query.order).then(({ rows }) => {
+    return selectArticlesByOrder(query.order).then(({ rows }) => {
       response.status(200).send({ articles: rows });
     });
   } else {
-    selectArticles().then(({ rows }) => {
+    return selectArticles().then(({ rows }) => {
       response.status(200).send({ articles: rows });
     });
   }
 };
 
-const getArticleById = (request, response) => {
+exports.getArticleById = (request, response) => {
   const { articleId } = request.params;
-  selectArticleById(articleId).then(({ rows }) => {
+  return selectArticleById(articleId).then(({ rows }) => {
     response.status(200).send({ article: rows[0] });
   });
 };
-
-module.exports = { getArticles, getArticleById };

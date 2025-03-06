@@ -16,7 +16,6 @@ app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
 app.get("/api/topics/:topicId", getTopicById);
-app.get("/api/topics")
 
 app.get("/api/users", getUsers);
 app.get("/api/users/:userId", getUserById);

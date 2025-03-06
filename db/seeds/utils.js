@@ -1,11 +1,7 @@
-const db = require("../../db/connection");
-const comments = require("../data/test-data/comments");
-
 convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
   return { created_at: new Date(created_at), ...otherProperties };
 };
-
 function propDict(dataList, propertyKey, propertyValue) {
   const dataDictionary = {};
   dataList.forEach((data) => {
@@ -14,18 +10,17 @@ function propDict(dataList, propertyKey, propertyValue) {
   return dataDictionary;
 }
 
+// Format Data Utils
 function formatTopicsData(rawTopicsData) {
   return rawTopicsData.map((topicData) => {
     return [topicData.slug, topicData.description, topicData.img_url];
   });
 }
-
 function formatUsersData(rawUsersData) {
   return rawUsersData.map((userData) => {
     return [userData.username, userData.name, userData.avatar_url];
   });
 }
-
 function formatArticlesData(rawArticlesData) {
   return rawArticlesData.map((article) => {
     return [
@@ -39,7 +34,6 @@ function formatArticlesData(rawArticlesData) {
     ];
   });
 }
-
 function formatCommentsData(rawCommentsData, articlesData) {
   const artilcesDictionary = propDict(articlesData, "title", "article_id");
   return rawCommentsData.map((comment) => {
@@ -52,6 +46,7 @@ function formatCommentsData(rawCommentsData, articlesData) {
     ];
   });
 }
+
 exports.convertTimestampToDate = convertTimestampToDate;
 exports.formatTopicsData = formatTopicsData;
 exports.formatUsersData = formatUsersData;

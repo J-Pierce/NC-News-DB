@@ -1,5 +1,4 @@
-const getApi = (request, response) => {
-  
+exports.getApi = (request, response) => {
   const endpoints = {
     "GET /api": {
       description:
@@ -32,5 +31,3 @@ const getApi = (request, response) => {
   };
   response.status(200).send({ endpoints: endpoints });
 };
-
-module.exports = { getApi };

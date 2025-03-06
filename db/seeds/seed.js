@@ -1,7 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
 const {
-  convertTimestampToDate,
   formatTopicsData,
   formatUsersData,
   formatArticlesData,
