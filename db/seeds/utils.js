@@ -8,40 +8,27 @@ convertTimestampToDate = ({ created_at, ...otherProperties }) => {
 
 function propDict(dataList, propertyKey, propertyValue) {
   const dataDictionary = {};
-  for (const data of dataList) {
+  dataList.forEach((data) => {
     dataDictionary[data[propertyKey]] = data[propertyValue];
-  }
+  });
   return dataDictionary;
 }
 
 function formatTopicsData(rawTopicsData) {
-  const formattedTopicsData = [];
-  for (const topicData of rawTopicsData) {
-    formattedTopicsData.push([
-      topicData.slug,
-      topicData.description,
-      topicData.img_url,
-    ]);
-  }
-  return formattedTopicsData;
+  return rawTopicsData.map((topicData) => {
+    return [topicData.slug, topicData.description, topicData.img_url];
+  });
 }
 
 function formatUsersData(rawUsersData) {
-  const formattedUsersData = [];
-  for (const userData of rawUsersData) {
-    formattedUsersData.push([
-      userData.username,
-      userData.name,
-      userData.avatar_url,
-    ]);
-  }
-  return formattedUsersData;
+  return rawUsersData.map((userData) => {
+    return [userData.username, userData.name, userData.avatar_url];
+  });
 }
 
 function formatArticlesData(rawArticlesData) {
-  const formattedArticlesData = [];
-  rawArticlesData.map((article) => {
-    formattedArticlesData.push([
+  return rawArticlesData.map((article) => {
+    return [
       article.title,
       article.topic,
       article.author,
@@ -49,24 +36,21 @@ function formatArticlesData(rawArticlesData) {
       convertTimestampToDate(article).created_at,
       article.votes,
       article.article_img_url,
-    ]);
+    ];
   });
-  return formattedArticlesData;
 }
 
 function formatCommentsData(rawCommentsData, articlesData) {
-  const formattedCommentsData = [];
-  artilcesDictionary = propDict(articlesData, "title", "article_id");
-  rawCommentsData.map((comment) => {
-    formattedCommentsData.push([
+  const artilcesDictionary = propDict(articlesData, "title", "article_id");
+  return rawCommentsData.map((comment) => {
+    return [
       artilcesDictionary[comment.article_title],
       comment.body,
       comment.votes,
       comment.author,
       convertTimestampToDate(comment).created_at,
-    ]);
+    ];
   });
-  return formattedCommentsData;
 }
 exports.convertTimestampToDate = convertTimestampToDate;
 exports.formatTopicsData = formatTopicsData;

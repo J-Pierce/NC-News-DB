@@ -1,4 +1,4 @@
-const db = require("./db/connection");
+const db = require("../db/connection");
 
 db.query("Select username, name FROM users")
   .then((data) => {
