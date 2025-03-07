@@ -1,6 +1,6 @@
 const db = require("../db/connection.js");
 const format = require("pg-format");
-const { checkExists } = require("../db/seeds/utils.js");
+const { checkExists } = require("./utils.js");
 
 exports.selectArticles = (queries) => {
   const promises = [];
