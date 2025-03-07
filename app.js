@@ -2,28 +2,22 @@ const express = require("express");
 const app = express();
 const {
   getApi,
-  getTopics,
-  getTopicById,
-  getUsers,
-  getUserById,
   getArticles,
   getArticleById,
-  getComments,
-  getCommentById,
+  handlePsqlErrors,
+  handleCustomErrors,
+  handleServerErrors,
 } = require("./controllers/index.controllers.js");
 
 app.get("/api", getApi);
 
-app.get("/api/topics", getTopics);
-app.get("/api/topics/:topicId", getTopicById);
-
-app.get("/api/users", getUsers);
-app.get("/api/users/:userId", getUserById);
-
+// Articles requests
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:articleId", getArticleById);
 
-app.get("/api/comments", getComments);
-app.get("/api/comments/:commentId", getCommentById);
+// Error handling
+app.use(handlePsqlErrors);
+app.use(handleCustomErrors);
+app.use(handleServerErrors);
 
 module.exports = app;

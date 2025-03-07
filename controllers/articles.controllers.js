@@ -1,35 +1,23 @@
-const {
-  selectArticles,
-  selectArticleById,
-  selectArticlesByAuthor,
-  selectArticlesByTopic,
-  selectArticlesByOrder,
-} = require("../models/index.models");
+const { selectArticles, selectArticleById } = require("../models/index.models");
 
-exports.getArticles = (request, response) => {
+exports.getArticles = (request, response, next) => {
   const query = request.query;
-  if (query.author) {
-    return selectArticlesByAuthor(query.author).then(({ rows }) => {
+  return selectArticles(query)
+    .then(({ rows }) => {
       response.status(200).send({ articles: rows });
+    })
+    .catch((error) => {
+      next(error);
     });
-  } else if (query.topic) {
-    return selectArticlesByTopic(query.topic).then(({ rows }) => {
-      response.status(200).send({ articles: rows });
-    });
-  } else if (query.order) {
-    return selectArticlesByOrder(query.order).then(({ rows }) => {
-      response.status(200).send({ articles: rows });
-    });
-  } else {
-    return selectArticles().then(({ rows }) => {
-      response.status(200).send({ articles: rows });
-    });
-  }
 };
 
-exports.getArticleById = (request, response) => {
+exports.getArticleById = (request, response, next) => {
   const { articleId } = request.params;
-  return selectArticleById(articleId).then(({ rows }) => {
-    response.status(200).send({ article: rows[0] });
-  });
+  return selectArticleById(articleId)
+    .then(({ rows }) => {
+      response.status(200).send({ article: rows[0] });
+    })
+    .catch((error) => {
+      next(error);
+    });
 };

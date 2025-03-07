@@ -1,27 +1,28 @@
+const db = require("../connection.js");
+const format = require("pg-format");
+
 convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
   return { created_at: new Date(created_at), ...otherProperties };
 };
-function propDict(dataList, propertyKey, propertyValue) {
+propDict = (dataList, propertyKey, propertyValue) => {
   const dataDictionary = {};
   dataList.forEach((data) => {
     dataDictionary[data[propertyKey]] = data[propertyValue];
   });
   return dataDictionary;
-}
-
-// Format Data Utils
-function formatTopicsData(rawTopicsData) {
+};
+exports.formatTopicsData = (rawTopicsData) => {
   return rawTopicsData.map((topicData) => {
     return [topicData.slug, topicData.description, topicData.img_url];
   });
-}
-function formatUsersData(rawUsersData) {
+};
+exports.formatUsersData = (rawUsersData) => {
   return rawUsersData.map((userData) => {
     return [userData.username, userData.name, userData.avatar_url];
   });
-}
-function formatArticlesData(rawArticlesData) {
+};
+exports.formatArticlesData = (rawArticlesData) => {
   return rawArticlesData.map((article) => {
     return [
       article.title,
@@ -33,8 +34,8 @@ function formatArticlesData(rawArticlesData) {
       article.article_img_url,
     ];
   });
-}
-function formatCommentsData(rawCommentsData, articlesData) {
+};
+exports.formatCommentsData = (rawCommentsData, articlesData) => {
   const artilcesDictionary = propDict(articlesData, "title", "article_id");
   return rawCommentsData.map((comment) => {
     return [
@@ -45,10 +46,15 @@ function formatCommentsData(rawCommentsData, articlesData) {
       convertTimestampToDate(comment).created_at,
     ];
   });
-}
+};
+exports.checkExists = (table, column, value) => {
+  const queryStr = format("SELECT * FROM %I WHERE %I = $1;", table, column);
+  return db.query(queryStr, [value]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Resource not found" });
+    }
+  });
+};
 
 exports.convertTimestampToDate = convertTimestampToDate;
-exports.formatTopicsData = formatTopicsData;
-exports.formatUsersData = formatUsersData;
-exports.formatArticlesData = formatArticlesData;
-exports.formatCommentsData = formatCommentsData;
+exports.propDict = propDict;
