@@ -25,3 +25,21 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET: /api/topics", () => {
+  describe("Functionality Tests", () => {
+    test("200: When no query given, responds with the topics objects containing all topics with each topic having the correct properties", () => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body }) => {
+          const topics = body.topics;
+          topics.forEach((topic) => {
+            const { slug, description } = topic;
+            expect(typeof slug).toBe("string");
+            expect(typeof description).toBe("string");
+          });
+        });
+    });
+  });
+});
