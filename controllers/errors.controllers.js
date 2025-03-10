@@ -4,7 +4,7 @@ exports.handlePsqlErrors = (error, request, response, next) => {
   }
   next(error);
 };
- 
+
 exports.handleCustomErrors = (error, request, response, next) => {
   if (error.status) {
     response.status(error.status).send({ msg: error.msg });
