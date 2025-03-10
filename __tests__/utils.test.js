@@ -41,7 +41,6 @@ describe("convertTimestampToDate", () => {
     expect(result).toEqual(expected);
   });
 });
-
 describe("Test propDict", () => {
   test("Returns a new array", () => {
     const input = [
