@@ -5,6 +5,7 @@ const {
   handleServerErrors,
 } = require("./errors.controllers");
 const { getTopics } = require("./topics.controllers");
+const { getArticlesById } = require("./articles.controllers");
 
 module.exports = {
   getApi,
@@ -12,4 +13,5 @@ module.exports = {
   handleCustomErrors,
   handleServerErrors,
   getTopics,
+  getArticlesById,
 };
