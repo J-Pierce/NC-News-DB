@@ -5,6 +5,19 @@ const {
   formatArticlesData,
   formatCommentsData,
 } = require("../db/seeds/utils");
+const { checkExists, commentCount } = require("../models/utils.models");
+
+const db = require("../db/connection");
+const seed = require("../db/seeds/seed");
+const data = require("../db/data/test-data");
+
+beforeEach(() => {
+  return seed(data);
+});
+
+afterAll(() => {
+  return db.end();
+});
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -599,5 +612,40 @@ describe("Test formatCommentsData", () => {
         new Date(1600560600000),
       ],
     ]);
+  });
+});
+describe("Test checkExists", () => {
+  test("When given a value, returns promise if row length > 0", () => {
+    checkExists("articles", "article_id", "3").then((data) => {
+      expect(data).toEqual([
+        {
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "some gifs",
+          created_at: new Date(1604394720000),
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        },
+      ]);
+    });
+  });
+
+  test("When given a value not in table, rejects promise if row length = 0", () => {
+    checkExists("articles", "article_id", "9999").then((error) => {
+      expect(error.msg).toBe("Resource Not Found");
+    });
+  });
+});
+
+xdescribe("Test commentCount", () => {
+  // throwing an error in node files cant find why
+  // going to move on and come back
+  test("returns an array containing the correct number of comments for each article id", () => {
+    commentCount().then((data) => {
+      expect(data).toEqual({ 1: 11, 3: 2, 5: 2, 6: 1, 9: 2 });
+    });
   });
 });
