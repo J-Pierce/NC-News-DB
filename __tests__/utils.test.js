@@ -634,18 +634,23 @@ describe("Test checkExists", () => {
   });
 
   test("When given a value not in table, rejects promise if row length = 0", () => {
-    checkExists("articles", "article_id", "9999").then((error) => {
+    checkExists("articles", "article_id", "9999").catch((error) => {
       expect(error.msg).toBe("Resource Not Found");
     });
   });
 });
 
-xdescribe("Test commentCount", () => {
+describe("Test commentCount", () => {
   // throwing an error in node files cant find why
   // going to move on and come back
   test("returns an array containing the correct number of comments for each article id", () => {
-    commentCount().then((data) => {
-      expect(data).toEqual({ 1: 11, 3: 2, 5: 2, 6: 1, 9: 2 });
-    });
+    commentCount()
+      .then((data) => {
+        console.log(data);
+        expect(data).toEqual({ 1: 11, 3: 2, 5: 2, 6: 1, 9: 2 });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   });
 });

@@ -6,6 +6,7 @@ const {
 } = require("./errors.controllers");
 //const {} = require("./topics.controllers");
 const { getArticlesById } = require("./articles.controllers");
+const { getCommentsByArticleId } = require("./comments.controllers");
 
 module.exports = {
   getApi,
@@ -14,4 +15,5 @@ module.exports = {
   handleCustomErrors,
   handleServerErrors,
   getArticlesById,
+  getCommentsByArticleId,
 };

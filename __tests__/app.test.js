@@ -123,25 +123,89 @@ describe("GET: /api/articles/:article_id", () => {
           );
         });
     });
-    describe("Error Tests", () => {
-      test("404: When given an article id that is not in the articles table, returns 'Not Found'", () => {
-        return request(app)
-          .get("/api/articles/99999")
-          .expect(404)
-          .then(({ body }) => {
-            const msg = body.msg;
-            expect(msg).toBe("Resource Not Found");
+  });
+  describe("Error Tests", () => {
+    test("404: When given an article id that is not in the articles table, returns 'Not Found'", () => {
+      return request(app)
+        .get("/api/articles/99999")
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Resource Not Found");
+        });
+    });
+    test("400: When given an article id that is of an incorrect data type, returns 'Bad Request'", () => {
+      return request(app)
+        .get("/api/articles/nonsense")
+        .expect(400)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+
+describe("GET: /api/articles/:article_id/comments", () => {
+  describe("Functionality Tests", () => {
+    test("200: When given an article id, responds with the comments with that article id", () => {
+      return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then((data) => {
+          //console.log(data.body.comments);
+          const comments = data.body.comments;
+
+          expect(comments.length).toBe(2);
+          comments.forEach((comment) => {
+            const { comment_id, votes, created_at, author, body, article_id } =
+              comment;
+            expect(typeof comment_id).toBe("number");
+            expect(typeof votes).toBe("number");
+            expect(typeof created_at).toBe("string");
+            expect(typeof author).toBe("string");
+            expect(typeof body).toBe("string");
+            expect(article_id).toBe(3);
           });
-      });
-      test("400: When given an article id that is of an incorrect data type, returns 'Bad Request'", () => {
-        return request(app)
-          .get("/api/articles/nonsense")
-          .expect(400)
-          .then(({ body }) => {
-            const msg = body.msg;
-            expect(msg).toBe("Bad Request");
-          });
-      });
+        });
+    });
+    test("Returned array is default sorted by the most recent comment first", () => {
+      return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then((data) => {
+          const comments = data.body.comments;
+          expect(comments).toBeSorted({ key: "created_at", descending: true });
+        });
+    });
+    test("200: When given an article id that doesn't have any associated comments, returns an empty array", () => {
+      return request(app)
+        .get("/api/articles/4/comments")
+        .expect(200)
+        .then((data) => {
+          const comments = data.body.comments;
+          expect(comments.length).toBe(0);
+        });
+    });
+  });
+  describe("Error Tests", () => {
+    test("404: When given an article id that is not in the articles table, returns 'Not Found'", () => {
+      return request(app)
+        .get("/api/articles/99999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Resource Not Found");
+        });
+    });
+    test("400: When given an article id that is of an incorrect data type, returns 'Bad Request'", () => {
+      return request(app)
+        .get("/api/articles/nonsense/comments")
+        .expect(400)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Bad Request");
+        });
     });
   });
 });
