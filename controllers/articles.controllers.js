@@ -5,12 +5,12 @@ const {
 } = require("../models/index.models");
 
 exports.getArticles = (request, response, next) => {
-  return selectArticles()
-    .then((rows) => {
+  const { sort_by, order } = request.query;
+  return selectArticles(sort_by, order)
+    .then(({ rows }) => {
       response.status(200).send({ articles: rows });
     })
     .catch((error) => {
-      console.log(error);
       next(error);
     });
 };

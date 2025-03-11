@@ -1,21 +1,33 @@
 const db = require("../db/connection");
-const { checkExists, commentCount } = require("./utils.models");
+const format = require("pg-format");
+const { checkExists } = require("./utils.models");
 
-exports.selectArticles = async () => {
-  const { rows } = await db.query(
-    "SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles ORDER By created_at DESC"
-  );
-  const countDict = await commentCount();
-  rows.map((article) => {
-    const id = article.article_id;
-    if (countDict[id]) {
-      article.comment_count = countDict[id];
-    } else {
-      article.comment_count = 0;
-    }
-    return article;
-  });
-  return rows;
+exports.selectArticles = (sort = "created_at", order = "DESC") => {
+  const whiteListSort = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+  const whiteListOrder = ["ASC", "DESC"];
+
+  // check sort queries are valid
+  if (!whiteListSort.includes(sort) || !whiteListOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  // Default string
+  let queryStr =
+    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles FULL OUTER JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id";
+
+  // Augment by ORDER BY queries
+  queryStr += format(" ORDER BY %I ", sort) + order;
+
+  // Return query
+  return db.query(queryStr);
 };
 
 exports.selectArticlesById = (article_id) => {

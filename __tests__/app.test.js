@@ -70,42 +70,73 @@ describe("\nGET: /api/users", () => {
   });
 });
 describe("\nGET: /api/articles", () => {
-  test("200: When no query given, responds with the aricles objects containing all articles with each article having the correct properties", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body }) => {
-        const articles = body.articles;
-        expect(articles.length).toBe(13);
-        articles.forEach((article) => {
-          const {
-            author,
-            title,
-            article_id,
-            topic,
-            created_at,
-            votes,
-            article_img_url,
-            comment_count,
-          } = article;
-          expect(typeof author).toBe("string");
-          expect(typeof title).toBe("string");
-          expect(typeof article_id).toBe("number");
-          expect(typeof topic).toBe("string");
-          expect(typeof created_at).toBe("string");
-          expect(typeof votes).toBe("number");
-          expect(typeof article_img_url).toBe("string");
-          expect(typeof comment_count).toBe("number");
+  describe("Functionality Tests", () => {
+    test("200: When no query given, responds with the aricles objects containing all articles with each article having the correct properties", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.articles;
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            const {
+              author,
+              title,
+              article_id,
+              topic,
+              created_at,
+              votes,
+              article_img_url,
+              comment_count,
+            } = article;
+            expect(typeof author).toBe("string");
+            expect(typeof title).toBe("string");
+            expect(typeof article_id).toBe("number");
+            expect(typeof topic).toBe("string");
+            expect(typeof created_at).toBe("string");
+            expect(typeof votes).toBe("number");
+            expect(typeof article_img_url).toBe("string");
+            expect(typeof comment_count).toBe("string");
+          });
         });
-      });
+    });
+    test("Returned array default sorts by date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .then(({ body }) => {
+          const articles = body.articles;
+          expect(articles).toBeSorted({ key: "created_at", descending: true });
+        });
+    });
+    test("200: When sort_by and order queries given, responds with the aricles objects containing all articles listed in the specified sort in the specified order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title&&order=ASC")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.articles;
+          expect(articles).toBeSorted({ key: "title" });
+        });
+    });
   });
-  test("Returned array default sorts by date in descending order", () => {
-    return request(app)
-      .get("/api/articles")
-      .then(({ body }) => {
-        const articles = body.articles;
-        expect(articles).toBeSorted({ key: "created_at", descending: true });
-      });
+  describe("Error Tests", () => {
+    test("400: When sort queried with an invalid column name, returns 'Bad Request'", () => {
+      return request(app)
+        .get("/api/articles?sort_by=nonsense")
+        .expect(400)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Bad Request");
+        });
+    });
+    test("400: When order queried with an invalid direction, returns 'Bad Request'", () => {
+      return request(app)
+        .get("/api/articles?order=nonsense")
+        .expect(400)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Bad Request");
+        });
+    });
   });
 });
 describe("\n/api/articles/:article_id:\n", () => {
@@ -327,9 +358,7 @@ describe("\n/api/articles/:article_id/comments:\n", () => {
           .get("/api/articles/3/comments")
           .expect(200)
           .then((data) => {
-            //console.log(data.body.comments);
             const comments = data.body.comments;
-
             expect(comments.length).toBe(2);
             comments.forEach((comment) => {
               const {
