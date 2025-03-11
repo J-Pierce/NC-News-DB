@@ -1,11 +1,15 @@
-const { getApi, getColumn } = require("./api.controllers");
+const { getApi, unhandledPath } = require("./api.controllers");
 const {
   handlePsqlErrors,
   handleCustomErrors,
   handleServerErrors,
 } = require("./errors.controllers");
-//const {} = require("./topics.controllers");
-const { getArticlesById } = require("./articles.controllers");
+const { getTopics } = require("./topics.controllers");
+const {
+  getArticles,
+  getArticlesById,
+  patchArticleById,
+} = require("./articles.controllers");
 const {
   getCommentsByArticleId,
   postCommentsByArticleId,
@@ -13,11 +17,14 @@ const {
 
 module.exports = {
   getApi,
-  getColumn,
+  unhandledPath,
   handlePsqlErrors,
   handleCustomErrors,
   handleServerErrors,
+  getTopics,
+  getArticles,
   getArticlesById,
+  patchArticleById,
   getCommentsByArticleId,
   postCommentsByArticleId,
 };

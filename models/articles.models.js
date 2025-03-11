@@ -28,3 +28,20 @@ exports.selectArticlesById = (article_id) => {
     return data[0];
   });
 };
+
+exports.updateArticlesById = (article_id, inc_votes) => {
+  if (!(typeof inc_votes === "number")) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+  const promises = [];
+  promises.push(checkExists("articles", "article_id", article_id));
+  promises.unshift(
+    db.query(
+      "UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *",
+      [article_id, inc_votes]
+    )
+  );
+  return Promise.all(promises).then((data) => {
+    return data[0];
+  });
+};

@@ -2,23 +2,31 @@ const express = require("express");
 const app = express();
 const {
   getApi,
-  getColumn,
+  unhandledPath,
   handlePsqlErrors,
   handleCustomErrors,
   handleServerErrors,
+  getTopics,
+  getArticles,
   getArticlesById,
+  patchArticleById,
   getCommentsByArticleId,
-  postCommentsByArticleId
+  postCommentsByArticleId,
 } = require("./controllers/index.controllers");
 
 app.use(express.json());
 
 app.get("/api", getApi);
-app.get("/api/:column", getColumn);
+app.get("/api/topics", getTopics);
+app.get("/api/articles", getArticles);
+
 app.get("/api/articles/:article_id", getArticlesById);
+app.patch("/api/articles/:article_id", patchArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
+
+app.all("*", unhandledPath);
 
 app.use(handlePsqlErrors);
 app.use(handleCustomErrors);

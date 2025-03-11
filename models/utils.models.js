@@ -23,7 +23,6 @@ exports.commentCount = () => {
         const value = row.comment_count;
         countDict[key] = Number(value);
       });
-      //console.log(countDict);
       return countDict;
     });
 };
