@@ -12,6 +12,7 @@ const {
   patchArticleById,
   getCommentsByArticleId,
   postCommentsByArticleId,
+  removeCommentById,
 } = require("./controllers/index.controllers");
 
 app.use(express.json());
@@ -25,6 +26,8 @@ app.patch("/api/articles/:article_id", patchArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
+
+app.delete("/api/comments/:comment_id", removeCommentById);
 
 app.all("*", unhandledPath);
 

@@ -485,3 +485,37 @@ describe("\n/api/articles/:article_id/comments:\n", () => {
     });
   });
 });
+describe("\n/api/comments/:comment_id:\n", () => {
+  describe("DELETE:", () => {
+    describe("Functionality Tests", () => {
+      test("204: When given a comment id, removes that comment from the comments table", () => {
+        return request(app)
+          .delete("/api/comments/3")
+          .expect(204)
+          .then(({ body }) => {
+            expect(body).toEqual({});
+          });
+      });
+    });
+    describe("Error Tests", () => {
+      test("404: When given a comment id that is not in the comments table, returns 'Resource Not Found'", () => {
+        return request(app)
+          .delete("/api/comments/99999")
+          .expect(404)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Resource Not Found");
+          });
+      });
+      test("400: When given a comment id that is of an incorrect data type, returns 'Bad Request'", () => {
+        return request(app)
+          .delete("/api/comments/nonsense")
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
+  });
+});

@@ -104,5 +104,8 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "removes the comment with the provided article id from the comments array, no content returned"
   }
 }
