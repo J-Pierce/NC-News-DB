@@ -31,7 +31,7 @@ exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
 
   // Augment by WHERE queries
   if (topic) {
-    promises.push(checkExists("articles", "topic", topic));
+    promises.push(checkExists("topics", "slug", topic));
     queryStr += " WHERE articles.topic = $1";
     queryValues.push(topic);
   }
@@ -53,7 +53,10 @@ exports.selectArticlesById = (article_id) => {
   const promises = [];
   promises.push(checkExists("articles", "article_id", article_id));
   promises.unshift(
-    db.query("SELECT * FROM articles WHERE article_id = $1", [article_id])
+    db.query(
+      "SELECT articles.*, COUNT(comments.comment_id) AS comment_count FROM articles FULL OUTER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id",
+      [article_id]
+    )
   );
   return Promise.all(promises).then((data) => {
     return data[0];

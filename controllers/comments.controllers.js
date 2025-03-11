@@ -31,7 +31,7 @@ exports.removeCommentById = (request, response, next) => {
   const comment_id = request.params.comment_id;
   deleteCommentById(comment_id)
     .then(({ rows }) => {
-      response.status(204).send({ deletedComment: rows[0] });
+      response.status(204).send();
     })
     .catch((error) => {
       next(error);

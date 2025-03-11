@@ -129,6 +129,15 @@ describe("\nGET: /api/articles", () => {
           });
         });
     });
+    test("200: When topic query given, responds with empty array if the specified topic exists but no articles reference it", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.articles;
+          expect(articles.length).toBe(0);
+        });
+    });
   });
   describe("Error Tests", () => {
     test("400: When queried with an invalid query, returns 'Bad Request'", () => {
@@ -187,6 +196,7 @@ describe("\n/api/articles/:article_id:\n", () => {
               created_at,
               votes,
               article_img_url,
+              comment_count,
             } = article;
             expect(author).toBe("icellusedkars");
             expect(title).toBe("Eight pug gifs that remind me of mitch");
@@ -198,6 +208,7 @@ describe("\n/api/articles/:article_id:\n", () => {
             expect(article_img_url).toBe(
               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
             );
+            expect(comment_count).toBe("2");
           });
       });
     });
@@ -565,12 +576,7 @@ describe("\n/api/comments/:comment_id:\n", () => {
   describe("DELETE:", () => {
     describe("Functionality Tests", () => {
       test("204: When given a comment id, removes that comment from the comments table", () => {
-        return request(app)
-          .delete("/api/comments/3")
-          .expect(204)
-          .then(({ body }) => {
-            expect(body).toEqual({});
-          });
+        return request(app).delete("/api/comments/3").expect(204);
       });
     });
     describe("Error Tests", () => {
