@@ -5,6 +5,7 @@ const {
   handleServerErrors,
 } = require("./errors.controllers");
 const { getTopics } = require("./topics.controllers");
+const { getUsers } = require("./users.controllers");
 const {
   getArticles,
   getArticlesById,
@@ -23,6 +24,7 @@ module.exports = {
   handleCustomErrors,
   handleServerErrors,
   getTopics,
+  getUsers,
   getArticles,
   getArticlesById,
   patchArticleById,

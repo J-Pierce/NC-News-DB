@@ -1,4 +1,5 @@
 const { selectTopics } = require("./topics.models");
+const { selectUsers } = require("./users.models");
 const {
   selectArticles,
   selectArticlesById,
@@ -12,6 +13,7 @@ const {
 
 module.exports = {
   selectTopics,
+  selectUsers,
   selectArticles,
   selectArticlesById,
   updateArticlesById,
