@@ -52,6 +52,23 @@ describe("\nGET: /api/topics", () => {
       });
   });
 });
+describe("\nGET: /api/users", () => {
+  test("200: When no query given, responds with the users objects containing all users with each user having the correct properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.users;
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          const { username, name, avatar_url } = user;
+          expect(typeof username).toBe("string");
+          expect(typeof name).toBe("string");
+          expect(typeof avatar_url).toBe("string");
+        });
+      });
+  });
+});
 describe("\nGET: /api/articles", () => {
   test("200: When no query given, responds with the aricles objects containing all articles with each article having the correct properties", () => {
     return request(app)
