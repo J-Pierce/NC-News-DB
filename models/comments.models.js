@@ -36,3 +36,14 @@ exports.insertCommentsByArticleId = (id, data) => {
     return data[0];
   });
 };
+
+exports.deleteCommentById = (comment_id) => {
+  const promises = [];
+  promises.push(checkExists("comments", "comment_id", comment_id));
+  promises.unshift(
+    db.query("DELETE FROM comments WHERE comment_id = $1", [comment_id])
+  );
+  return Promise.all(promises).then((data) => {
+    return data[0];
+  });
+};

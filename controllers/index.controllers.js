@@ -13,6 +13,7 @@ const {
 const {
   getCommentsByArticleId,
   postCommentsByArticleId,
+  removeCommentById,
 } = require("./comments.controllers");
 
 module.exports = {
@@ -27,4 +28,5 @@ module.exports = {
   patchArticleById,
   getCommentsByArticleId,
   postCommentsByArticleId,
+  removeCommentById,
 };
