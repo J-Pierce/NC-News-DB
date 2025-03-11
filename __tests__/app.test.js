@@ -117,8 +117,29 @@ describe("\nGET: /api/articles", () => {
           expect(articles).toBeSorted({ key: "title" });
         });
     });
+    test("200: When topic query given, responds with the aricles objects containing all articles with the specified topic value", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.articles;
+          expect(articles.length).toBe(12);
+          articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+          });
+        });
+    });
   });
   describe("Error Tests", () => {
+    test("400: When queried with an invalid query, returns 'Bad Request'", () => {
+      return request(app)
+        .get("/api/articles?nonsense=nonsense")
+        .expect(400)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Bad Request");
+        });
+    });
     test("400: When sort queried with an invalid column name, returns 'Bad Request'", () => {
       return request(app)
         .get("/api/articles?sort_by=nonsense")
@@ -135,6 +156,15 @@ describe("\nGET: /api/articles", () => {
         .then(({ body }) => {
           const msg = body.msg;
           expect(msg).toBe("Bad Request");
+        });
+    });
+    test("404: When topic queried with non-existing topic, returns 'Resource Not Found'", () => {
+      return request(app)
+        .get("/api/articles?topic=nonsense")
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Resource Not Found");
         });
     });
   });
