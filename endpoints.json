@@ -34,7 +34,8 @@
         "article_img_url",
         "comment_count"
       ],
-      "order": ["ASC", "DESC"]
+      "order": ["ASC", "DESC"],
+      "topic": "filter returned arrays by toic provided"
     },
     "exampleResponse": {
       "articles": [

@@ -5,8 +5,9 @@ const {
 } = require("../models/index.models");
 
 exports.getArticles = (request, response, next) => {
-  const { sort_by, order } = request.query;
-  return selectArticles(sort_by, order)
+  const { sort_by, order, topic, ...rest } = request.query;
+
+  return selectArticles(sort_by, order, topic, rest)
     .then(({ rows }) => {
       response.status(200).send({ articles: rows });
     })
