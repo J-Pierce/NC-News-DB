@@ -1,8 +1,9 @@
 exports.handlePsqlErrors = (error, request, response, next) => {
   if (error.code === "22P02") {
     return response.status(400).send({ msg: "Bad Request" });
+  } else {
+    next(error);
   }
-  next(error);
 };
 
 exports.handleCustomErrors = (error, request, response, next) => {
