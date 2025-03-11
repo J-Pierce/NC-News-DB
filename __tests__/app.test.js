@@ -493,7 +493,6 @@ describe("\n/api/comments/:comment_id:\n", () => {
           .delete("/api/comments/3")
           .expect(204)
           .then(({ body }) => {
-            console.log(body.deletedComment);
             expect(body).toEqual({});
           });
       });
