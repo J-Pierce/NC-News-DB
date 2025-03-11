@@ -145,7 +145,6 @@ describe("GET: /api/articles/:article_id", () => {
     });
   });
 });
-
 describe("GET: /api/articles/:article_id/comments", () => {
   describe("Functionality Tests", () => {
     test("200: When given an article id, responds with the comments with that article id", () => {
@@ -205,6 +204,71 @@ describe("GET: /api/articles/:article_id/comments", () => {
         .then(({ body }) => {
           const msg = body.msg;
           expect(msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+describe("POST: /api/articles/:article_id/comments", () => {
+  describe("Functionality Tests", () => {
+    test("201: When passed data for a comment, adds that comment to the comments table and returns data added", () => {
+      return request(app)
+        .post("/api/articles/4/comments")
+        .send({
+          username: "butter_bridge",
+          body: "sometimes code is confusing",
+        })
+        .expect(201)
+        .then((data) => {
+          const comment = data.body.newComment;
+          const { comment_id, votes, created_at, author, body, article_id } =
+            comment;
+          expect(comment_id).toBe(19);
+          expect(votes).toBe(0);
+          expect(typeof created_at).toBe("string");
+          expect(author).toBe("butter_bridge");
+          expect(body).toBe("sometimes code is confusing");
+          expect(article_id).toBe(4);
+        });
+    });
+  });
+  describe("Error Tests", () => {
+    test("404: When given an article id that is not in the articles table, returns 'Resource Not Found'", () => {
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send({
+          username: "butter_bridge",
+          body: "sometimes code is confusing",
+        })
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Resource Not Found");
+        });
+    });
+    test("400: When given an article id that is of an incorrect data type, returns 'Bad Request'", () => {
+      return request(app)
+        .post("/api/articles/nonsense/comments")
+        .send({
+          username: "butter_bridge",
+          body: "sometimes code is confusing",
+        })
+        .expect(400)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Bad Request");
+        });
+    });
+    test("400: When given a username that is not in the users table, returns 'Resource Not Found'", () => {
+      return request(app)
+        .post("/api/articles/4/comments")
+        .send({
+          username: "james",
+          body: "sometimes code is confusing",
+        })
+        .expect(404)
+        .then(({ body }) => {
+          const msg = body.msg;
+          expect(msg).toBe("Resource Not Found");
         });
     });
   });
