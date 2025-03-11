@@ -23,8 +23,19 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles, defaulted ordered by date in a descending order",
-    "queries": [],
+    "description": "serves an array of all articles, default ordered by created_at in a descending order",
+    "queries": {
+      "sort_by": [
+        "title",
+        "topic",
+        "author",
+        "created_at",
+        "votes",
+        "article_img_url",
+        "comment_count"
+      ],
+      "order": ["ASC", "DESC"]
+    },
     "exampleResponse": {
       "articles": [
         {

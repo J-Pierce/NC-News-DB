@@ -639,10 +639,3 @@ describe("Test checkExists", () => {
     });
   });
 });
-
-describe("Test commentCount", () => {
-  test("returns an array containing the correct number of comments for each article id", async () => {
-    const data = await commentCount();
-    expect(data).toEqual({ 1: 11, 3: 2, 5: 2, 6: 1, 9: 2 });
-  });
-});
