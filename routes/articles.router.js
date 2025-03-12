@@ -1,6 +1,6 @@
 const {
   getArticles,
-  getArticlesById,
+  getArticleById,
   patchArticleById,
   getCommentsByArticleId,
   postCommentsByArticleId,
@@ -12,7 +12,7 @@ articlesRouter.route("/").get(getArticles);
 
 articlesRouter
   .route("/:article_id")
-  .get(getArticlesById)
+  .get(getArticleById)
   .patch(patchArticleById);
 
 articlesRouter
