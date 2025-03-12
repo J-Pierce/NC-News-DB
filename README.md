@@ -20,7 +20,7 @@ Once cloned, open the folder in an IDE such as VS Code. To install dependencies,
 
     npm install
 
-To fishish the setup you will need to make the environment files documented **below**. Once this is done the databases can be seeded by running in your terminal:
+To finish the setup you will need to make the environment files documented **below**. Once this is done the databases can be seeded by running in your terminal:
 
     npm run setup-dbs
     npm run seed
