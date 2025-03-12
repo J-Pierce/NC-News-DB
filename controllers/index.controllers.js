@@ -5,10 +5,10 @@ const {
   handleServerErrors,
 } = require("./errors.controllers");
 const { getTopics } = require("./topics.controllers");
-const { getUsers } = require("./users.controllers");
+const { getUsers, getUserByUsername } = require("./users.controllers");
 const {
   getArticles,
-  getArticlesById,
+  getArticleById,
   patchArticleById,
 } = require("./articles.controllers");
 const {
@@ -25,8 +25,9 @@ module.exports = {
   handleServerErrors,
   getTopics,
   getUsers,
+  getUserByUsername,
   getArticles,
-  getArticlesById,
+  getArticleById,
   patchArticleById,
   getCommentsByArticleId,
   postCommentsByArticleId,

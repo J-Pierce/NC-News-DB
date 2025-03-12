@@ -69,112 +69,148 @@ describe("\nGET: /api/users", () => {
       });
   });
 });
-describe("\nGET: /api/articles", () => {
-  describe("Functionality Tests", () => {
-    test("200: When no query given, responds with the aricles objects containing all articles with each article having the correct properties", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles.length).toBe(13);
-          articles.forEach((article) => {
-            const {
-              author,
-              title,
-              article_id,
-              topic,
-              created_at,
-              votes,
-              article_img_url,
-              comment_count,
-            } = article;
-            expect(typeof author).toBe("string");
-            expect(typeof title).toBe("string");
-            expect(typeof article_id).toBe("number");
-            expect(typeof topic).toBe("string");
-            expect(typeof created_at).toBe("string");
-            expect(typeof votes).toBe("number");
-            expect(typeof article_img_url).toBe("string");
-            expect(typeof comment_count).toBe("string");
+describe("\nGET: /api/users/:username\n", () => {
+  describe("GET:", () => {
+    describe("Functionality Tests", () => {
+      test("200: When given a username, responds with the user with that username", () => {
+        return request(app)
+          .get("/api/users/rogersop")
+          .expect(200)
+          .then(({ body }) => {
+            const user = body.user;
+            const { username, name, avatar_url } = user;
+            expect(username).toBe("rogersop");
+            expect(name).toBe("paul");
+            expect(avatar_url).toBe(
+              "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+            );
           });
-        });
+      });
     });
-    test("Returned array default sorts by date in descending order", () => {
-      return request(app)
-        .get("/api/articles")
-        .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles).toBeSorted({ key: "created_at", descending: true });
-        });
-    });
-    test("200: When sort_by and order queries given, responds with the aricles objects containing all articles listed in the specified sort in the specified order", () => {
-      return request(app)
-        .get("/api/articles?sort_by=title&&order=ASC")
-        .expect(200)
-        .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles).toBeSorted({ key: "title" });
-        });
-    });
-    test("200: When topic query given, responds with the aricles objects containing all articles with the specified topic value", () => {
-      return request(app)
-        .get("/api/articles?topic=mitch")
-        .expect(200)
-        .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles.length).toBe(12);
-          articles.forEach((article) => {
-            expect(article.topic).toBe("mitch");
+    describe("Error Tests", () => {
+      test("404: When given a username that is not in the users table, returns 'Resource Not Found'", () => {
+        return request(app)
+          .get("/api/users/nonsense")
+          .expect(404)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Resource Not Found");
           });
-        });
-    });
-    test("200: When topic query given, responds with empty array if the specified topic exists but no articles reference it", () => {
-      return request(app)
-        .get("/api/articles?topic=paper")
-        .expect(200)
-        .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles.length).toBe(0);
-        });
+      });
     });
   });
-  describe("Error Tests", () => {
-    test("400: When queried with an invalid query, returns 'Bad Request'", () => {
-      return request(app)
-        .get("/api/articles?nonsense=nonsense")
-        .expect(400)
-        .then(({ body }) => {
-          const msg = body.msg;
-          expect(msg).toBe("Bad Request");
-        });
+});
+describe("\n/api/articles\n", () => {
+  describe("GET:", () => {
+    describe("Functionality Tests", () => {
+      test("200: When no query given, responds with the aricles objects containing all articles with each article having the correct properties", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles.length).toBe(13);
+            articles.forEach((article) => {
+              const {
+                author,
+                title,
+                article_id,
+                topic,
+                created_at,
+                votes,
+                article_img_url,
+                comment_count,
+              } = article;
+              expect(typeof author).toBe("string");
+              expect(typeof title).toBe("string");
+              expect(typeof article_id).toBe("number");
+              expect(typeof topic).toBe("string");
+              expect(typeof created_at).toBe("string");
+              expect(typeof votes).toBe("number");
+              expect(typeof article_img_url).toBe("string");
+              expect(typeof comment_count).toBe("string");
+            });
+          });
+      });
+      test("Returned array default sorts by date in descending order", () => {
+        return request(app)
+          .get("/api/articles")
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles).toBeSorted({
+              key: "created_at",
+              descending: true,
+            });
+          });
+      });
+      test("200: When sort_by and order queries given, responds with the aricles objects containing all articles listed in the specified sort in the specified order", () => {
+        return request(app)
+          .get("/api/articles?sort_by=title&&order=ASC")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles).toBeSorted({ key: "title" });
+          });
+      });
+      test("200: When topic query given, responds with the aricles objects containing all articles with the specified topic value", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles.length).toBe(12);
+            articles.forEach((article) => {
+              expect(article.topic).toBe("mitch");
+            });
+          });
+      });
+      test("200: When topic query given, responds with empty array if the specified topic exists but no articles reference it", () => {
+        return request(app)
+          .get("/api/articles?topic=paper")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles.length).toBe(0);
+          });
+      });
     });
-    test("400: When sort queried with an invalid column name, returns 'Bad Request'", () => {
-      return request(app)
-        .get("/api/articles?sort_by=nonsense")
-        .expect(400)
-        .then(({ body }) => {
-          const msg = body.msg;
-          expect(msg).toBe("Bad Request");
-        });
-    });
-    test("400: When order queried with an invalid direction, returns 'Bad Request'", () => {
-      return request(app)
-        .get("/api/articles?order=nonsense")
-        .expect(400)
-        .then(({ body }) => {
-          const msg = body.msg;
-          expect(msg).toBe("Bad Request");
-        });
-    });
-    test("404: When topic queried with non-existing topic, returns 'Resource Not Found'", () => {
-      return request(app)
-        .get("/api/articles?topic=nonsense")
-        .expect(404)
-        .then(({ body }) => {
-          const msg = body.msg;
-          expect(msg).toBe("Resource Not Found");
-        });
+    describe("Error Tests", () => {
+      test("400: When queried with an invalid query, returns 'Bad Request'", () => {
+        return request(app)
+          .get("/api/articles?nonsense=nonsense")
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("400: When sort queried with an invalid column name, returns 'Bad Request'", () => {
+        return request(app)
+          .get("/api/articles?sort_by=nonsense")
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("400: When order queried with an invalid direction, returns 'Bad Request'", () => {
+        return request(app)
+          .get("/api/articles?order=nonsense")
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("404: When topic queried with non-existing topic, returns 'Resource Not Found'", () => {
+        return request(app)
+          .get("/api/articles?topic=nonsense")
+          .expect(404)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Resource Not Found");
+          });
+      });
     });
   });
 });
@@ -213,7 +249,7 @@ describe("\n/api/articles/:article_id:\n", () => {
       });
     });
     describe("Error Tests", () => {
-      test("404: When given an article id that is not in the articles table, returns 'Not Found'", () => {
+      test("404: When given an article id that is not in the articles table, returns 'Resource Not Found'", () => {
         return request(app)
           .get("/api/articles/99999")
           .expect(404)
@@ -342,7 +378,7 @@ describe("\n/api/articles/:article_id:\n", () => {
       });
     });
     describe("Error Tests", () => {
-      test("404: When given an article id that is not in the articles table, returns 'Not Found'", () => {
+      test("404: When given an article id that is not in the articles table, returns 'Resource Not Found'", () => {
         return request(app)
           .patch("/api/articles/9999")
           .send({
@@ -442,7 +478,7 @@ describe("\n/api/articles/:article_id/comments:\n", () => {
       });
     });
     describe("Error Tests", () => {
-      test("404: When given an article id that is not in the articles table, returns 'Not Found'", () => {
+      test("404: When given an article id that is not in the articles table, returns 'Resource Not Found'", () => {
         return request(app)
           .get("/api/articles/99999/comments")
           .expect(404)

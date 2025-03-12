@@ -1,6 +1,6 @@
 const {
   selectArticles,
-  selectArticlesById,
+  selectArticleById,
   updateArticlesById,
 } = require("../models/index.models");
 
@@ -14,9 +14,9 @@ exports.getArticles = (request, response, next) => {
       next(error);
     });
 };
-exports.getArticlesById = (request, response, next) => {
+exports.getArticleById = (request, response, next) => {
   const { article_id } = request.params;
-  return selectArticlesById(article_id)
+  return selectArticleById(article_id)
     .then(({ rows }) => {
       response.status(200).send({ article: rows[0] });
     })

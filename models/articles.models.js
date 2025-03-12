@@ -48,7 +48,7 @@ exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
     return data[0];
   });
 };
-exports.selectArticlesById = (article_id) => {
+exports.selectArticleById = (article_id) => {
   const promises = [];
   promises.push(checkExists("articles", "article_id", article_id));
   promises.unshift(
