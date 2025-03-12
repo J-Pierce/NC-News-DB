@@ -5,7 +5,6 @@ exports.handlePsqlErrors = (error, request, response, next) => {
     next(error);
   }
 };
-
 exports.handleCustomErrors = (error, request, response, next) => {
   if (error.status) {
     return response.status(error.status).send({ msg: error.msg });
@@ -13,7 +12,6 @@ exports.handleCustomErrors = (error, request, response, next) => {
     next(error);
   }
 };
-
 exports.handleServerErrors = (error, request, response, next) => {
   console.log(error, "handle server errors");
   return response.status(500).send({ msg: "Internal Server Error" });

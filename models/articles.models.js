@@ -48,7 +48,6 @@ exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
     return data[0];
   });
 };
-
 exports.selectArticlesById = (article_id) => {
   const promises = [];
   promises.push(checkExists("articles", "article_id", article_id));
@@ -62,7 +61,6 @@ exports.selectArticlesById = (article_id) => {
     return data[0];
   });
 };
-
 exports.updateArticlesById = (article_id, inc_votes) => {
   if (!(typeof inc_votes === "number")) {
     return Promise.reject({ status: 400, msg: "Bad Request" });

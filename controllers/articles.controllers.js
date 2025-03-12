@@ -6,7 +6,6 @@ const {
 
 exports.getArticles = (request, response, next) => {
   const { sort_by, order, topic, ...rest } = request.query;
-
   return selectArticles(sort_by, order, topic, rest)
     .then(({ rows }) => {
       response.status(200).send({ articles: rows });
@@ -15,9 +14,8 @@ exports.getArticles = (request, response, next) => {
       next(error);
     });
 };
-
 exports.getArticlesById = (request, response, next) => {
-  const article_id = request.params.article_id;
+  const { article_id } = request.params;
   return selectArticlesById(article_id)
     .then(({ rows }) => {
       response.status(200).send({ article: rows[0] });
@@ -26,7 +24,6 @@ exports.getArticlesById = (request, response, next) => {
       next(error);
     });
 };
-
 exports.patchArticleById = (request, response, next) => {
   const { article_id } = request.params;
   const { inc_votes } = request.body;

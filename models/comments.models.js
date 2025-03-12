@@ -14,29 +14,24 @@ exports.selectCommentsByArticleId = (article_id) => {
     return data[0];
   });
 };
-
-exports.insertCommentsByArticleId = (id, data) => {
-  let { article_id, body, votes, username, created_at } = data;
-  article_id ??= id;
-  votes ??= 0;
-  created_at ??= new Date(Date.now());
-  const author = username;
+exports.insertCommentsByArticleId = (article_id, username, body) => {
+  const votes = 0;
+  const created_at = new Date(Date.now());
 
   const promises = [];
-  promises.push(checkExists("articles", "article_id", id));
+  promises.push(checkExists("articles", "article_id", article_id));
   promises.push(checkExists("users", "username", username));
 
   promises.unshift(
     db.query(
       "INSERT INTO comments (article_id, body, votes, author, created_at) VALUES ($1,$2,$3,$4,$5) RETURNING *",
-      [article_id, body, votes, author, created_at]
+      [article_id, body, votes, username, created_at]
     )
   );
   return Promise.all(promises).then((data) => {
     return data[0];
   });
 };
-
 exports.deleteCommentById = (comment_id) => {
   const promises = [];
   promises.push(checkExists("comments", "comment_id", comment_id));

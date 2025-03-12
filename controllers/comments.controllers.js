@@ -14,11 +14,10 @@ exports.getCommentsByArticleId = (request, response, next) => {
       next(error);
     });
 };
-
 exports.postCommentsByArticleId = (request, response, next) => {
-  const article_id = request.params.article_id;
-  const data = request.body;
-  insertCommentsByArticleId(article_id, data)
+  const { article_id } = request.params;
+  const { username, body } = request.body;
+  insertCommentsByArticleId(article_id, username, body)
     .then(({ rows }) => {
       response.status(201).send({ newComment: rows[0] });
     })
@@ -26,11 +25,10 @@ exports.postCommentsByArticleId = (request, response, next) => {
       next(error);
     });
 };
-
 exports.removeCommentById = (request, response, next) => {
-  const comment_id = request.params.comment_id;
+  const { comment_id } = request.params;
   deleteCommentById(comment_id)
-    .then(({ rows }) => {
+    .then(() => {
       response.status(204).send();
     })
     .catch((error) => {
