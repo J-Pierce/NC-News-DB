@@ -609,6 +609,123 @@ describe("\n/api/articles/:article_id/comments:\n", () => {
   });
 });
 describe("\n/api/comments/:comment_id:\n", () => {
+  describe("PATCH:", () => {
+    describe("Functionality Tests", () => {
+      test("200: When given a comment_id and a positive votes to add, increases that comments votes and returns the updated comment", () => {
+        return request(app)
+          .patch("/api/comments/4")
+          .send({
+            inc_votes: 50,
+          })
+          .expect(200)
+          .then((data) => {
+            const comment = data.body.updatedComment;
+            const { comment_id, article_id, body, votes, author, created_at } =
+              comment;
+            expect(comment_id).toBe(4);
+            expect(article_id).toBe(1);
+            expect(body).toBe(
+              " I carry a log — yes. Is it funny to you? It is not to me."
+            );
+            expect(votes).toBe(-50);
+            expect(author).toBe("icellusedkars");
+            expect(created_at).toBe("2020-02-23T12:01:00.000Z");
+          });
+      });
+      test("200: When given a comment_id and a negative votes to add, decreases that comments votes and returns the updated comment", () => {
+        return request(app)
+          .patch("/api/comments/4")
+          .send({
+            inc_votes: -50,
+          })
+          .expect(200)
+          .then((data) => {
+            const comment = data.body.updatedComment;
+            const { comment_id, article_id, body, votes, author, created_at } =
+              comment;
+            expect(comment_id).toBe(4);
+            expect(article_id).toBe(1);
+            expect(body).toBe(
+              " I carry a log — yes. Is it funny to you? It is not to me."
+            );
+            expect(votes).toBe(-150);
+            expect(author).toBe("icellusedkars");
+            expect(created_at).toBe("2020-02-23T12:01:00.000Z");
+          });
+      });
+      test("200: When unnecessary/extra properties are included, they are ignored from updating", () => {
+        return request(app)
+          .patch("/api/comments/4")
+          .send({
+            inc_votes: 50,
+            opinion: "good",
+            hello: "goodbye",
+          })
+          .expect(200)
+          .then((data) => {
+            const comment = data.body.updatedComment;
+            const { comment_id, article_id, body, votes, author, created_at } =
+              comment;
+            expect(comment_id).toBe(4);
+            expect(article_id).toBe(1);
+            expect(body).toBe(
+              " I carry a log — yes. Is it funny to you? It is not to me."
+            );
+            expect(votes).toBe(-50);
+            expect(author).toBe("icellusedkars");
+            expect(created_at).toBe("2020-02-23T12:01:00.000Z");
+          });
+      });
+    });
+    describe("Error Tests", () => {
+      test("404: When given a comment_id that is not in the comments table, returns 'Resource Not Found'", () => {
+        return request(app)
+          .patch("/api/comments/9999")
+          .send({
+            inc_votes: 50,
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Resource Not Found");
+          });
+      });
+      test("400: When given a comment_id that is of an incorrect data type, returns 'Bad Request'", () => {
+        return request(app)
+          .patch("/api/comments/nonsense")
+          .send({
+            inc_votes: 50,
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("400: When given inc_votes that is of an incorrect data type, returns 'Bad Request'", () => {
+        return request(app)
+          .patch("/api/comments/4")
+          .send({
+            inc_votes: "nonsense",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("400: When not given inc_votes, returns 'Bad Request'\n", () => {
+        return request(app)
+          .patch("/api/comments/4")
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
+  });
   describe("DELETE:", () => {
     describe("Functionality Tests", () => {
       test("204: When given a comment id, removes that comment from the comments table", () => {

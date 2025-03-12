@@ -32,6 +32,22 @@ exports.insertCommentsByArticleId = (article_id, username, body) => {
     return data[0];
   });
 };
+exports.updateCommentById = (comment_id, inc_votes) => {
+  if (!(typeof inc_votes === "number")) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+  const promises = [];
+  promises.push(checkExists("comments", "comment_id", comment_id));
+  promises.unshift(
+    db.query(
+      "UPDATE comments SET votes = votes + $2 WHERE comment_id = $1 RETURNING *",
+      [comment_id, inc_votes]
+    )
+  );
+  return Promise.all(promises).then((data) => {
+    return data[0];
+  });
+};
 exports.deleteCommentById = (comment_id) => {
   const promises = [];
   promises.push(checkExists("comments", "comment_id", comment_id));
