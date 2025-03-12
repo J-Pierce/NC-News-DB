@@ -1,6 +1,7 @@
 const {
   selectCommentsByArticleId,
   insertCommentsByArticleId,
+  updateCommentById,
   deleteCommentById,
 } = require("../models/index.models");
 
@@ -20,6 +21,19 @@ exports.postCommentsByArticleId = (request, response, next) => {
   insertCommentsByArticleId(article_id, username, body)
     .then(({ rows }) => {
       response.status(201).send({ newComment: rows[0] });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.patchCommentById = (request, response, next) => {
+  const { comment_id } = request.params;
+  const { inc_votes } = request.body;
+  return updateCommentById(comment_id, inc_votes)
+    .then(({ rows }) => {
+      console.log(rows);
+      response.status(200).send({ updatedComment: rows[0] });
     })
     .catch((error) => {
       next(error);

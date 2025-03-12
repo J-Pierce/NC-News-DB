@@ -28,6 +28,21 @@
       }
     }
   },
+  "/api/users/:username": {
+    "GET": {
+      "description": "serves the user with the provided username",
+      "queries": [],
+      "exampleResponse": {
+        "users": [
+          {
+            "username": "butter_bridge",
+            "name": "jonny",
+            "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+          }
+        ]
+      }
+    }
+  },
   "/api/articles": {
     "GET": {
       "description": "serves an array of all articles, default ordered by created_at in a descending order",
@@ -144,6 +159,22 @@
     }
   },
   "/api/comments/:comment_id": {
+    "PATCH": {
+      "description": "updates the comment with the provided comment_id and returns the updated article",
+      "inputs": {
+        "inc_votes": "amount to change votes property by, can be positive or negative"
+      },
+      "exampleResponse": {
+        "comment": {
+          "comment_id": 4,
+          "article_id": 1,
+          "body": "I carry a log — yes. Is it funny to you? It is not to me.",
+          "votes": -150,
+          "author": "icellusedkars",
+          "created_at": "2020-02-23T12:01:00.000Z"
+        }
+      }
+    },
     "DELETE": {
       "description": "removes the comment with the provided article id from the comments array, no content returned"
     }
