@@ -32,7 +32,6 @@ exports.patchCommentById = (request, response, next) => {
   const { inc_votes } = request.body;
   return updateCommentById(comment_id, inc_votes)
     .then(({ rows }) => {
-      console.log(rows);
       response.status(200).send({ updatedComment: rows[0] });
     })
     .catch((error) => {
