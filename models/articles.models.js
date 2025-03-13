@@ -124,3 +124,13 @@ exports.updateArticlesById = (article_id, inc_votes) => {
     return data[0];
   });
 };
+exports.deleteArticleById = (article_id) => {
+  const promises = [];
+  promises.push(checkExists("articles", "article_id", article_id));
+  promises.unshift(
+    db.query("DELETE FROM articles WHERE article_id = $1", [article_id])
+  );
+  return Promise.all(promises).then((data) => {
+    return data[0];
+  });
+};

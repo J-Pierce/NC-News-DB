@@ -3,6 +3,7 @@ const {
   insertArticle,
   selectArticleById,
   updateArticlesById,
+  deleteArticleById,
 } = require("../models/index.models");
 
 exports.getArticles = (request, response, next) => {
@@ -41,6 +42,16 @@ exports.patchArticleById = (request, response, next) => {
   return updateArticlesById(article_id, inc_votes)
     .then(({ rows }) => {
       response.status(200).send({ updatedArticle: rows[0] });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+exports.removeArticleById = (request, response, next) => {
+  const { article_id } = request.params;
+  deleteArticleById(article_id)
+    .then(() => {
+      response.status(204).send();
     })
     .catch((error) => {
       next(error);

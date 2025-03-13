@@ -704,6 +704,46 @@ describe("\n/api/articles/:article_id:\n", () => {
       });
     });
   });
+  describe("DELETE:", () => {
+    describe("Functionality Tests", () => {
+      test("204: When given an article_id, removes that article from the articles table", () => {
+        return request(app).delete("/api/articles/3").expect(204);
+      });
+      test("Removes comments associated with article id from the comments table", () => {
+        return request(app)
+          .delete("/api/articles/3")
+          .then(() => {
+            return request(app).get("/api/comments").expect(200);
+          })
+          .then(({ body }) => {
+            const comments = body.comments;
+            comments.forEach((comment) => {
+              expect(comment.article_id).not.toBe(3);
+            });
+          });
+      });
+    });
+    describe("Error Tests", () => {
+      test("404: When given an article_id that is not in the articles table, returns 'Resource Not Found'", () => {
+        return request(app)
+          .delete("/api/articles/99999")
+          .expect(404)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Resource Not Found");
+          });
+      });
+      test("400: When given an article_id that is of an incorrect data type, returns 'Bad Request'", () => {
+        return request(app)
+          .delete("/api/articles/nonsense")
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
+  });
 });
 describe("\n/api/articles/:article_id/comments:\n", () => {
   describe("GET:", () => {
@@ -910,6 +950,28 @@ describe("\n/api/articles/:article_id/comments:\n", () => {
             expect(msg).toBe("Resource Not Found");
           });
       });
+    });
+  });
+});
+describe("\n/api/comments\n", () => {
+  describe("GET:", () => {
+    test("200: When no query given, responds with the comments objects containing all comments with each comment having the correct properties", () => {
+      return request(app)
+        .get("/api/comments")
+        .expect(200)
+        .then((data) => {
+          comments = data.body.comments;
+          comments.forEach((comment) => {
+            const { comment_id, article_id, body, votes, author, created_at } =
+              comment;
+            expect(typeof comment_id).toBe("number");
+            expect(typeof article_id).toBe("number");
+            expect(typeof body).toBe("string");
+            expect(typeof votes).toBe("number");
+            expect(typeof author).toBe("string");
+            expect(typeof created_at).toBe("string");
+          });
+        });
     });
   });
 });

@@ -11,8 +11,10 @@ const {
   postArticle,
   getArticleById,
   patchArticleById,
+  removeArticleById,
 } = require("./articles.controllers");
 const {
+  getComments,
   getCommentsByArticleId,
   postCommentsByArticleId,
   patchCommentById,
@@ -33,6 +35,8 @@ module.exports = {
   postArticle,
   getArticleById,
   patchArticleById,
+  removeArticleById,
+  getComments,
   getCommentsByArticleId,
   postCommentsByArticleId,
   patchCommentById,
