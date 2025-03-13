@@ -5,8 +5,10 @@ const {
   insertArticle,
   selectArticleById,
   updateArticlesById,
+  deleteArticleById,
 } = require("./articles.models");
 const {
+  selectComments,
   selectCommentsByArticleId,
   insertCommentsByArticleId,
   updateCommentById,
@@ -22,6 +24,8 @@ module.exports = {
   insertArticle,
   selectArticleById,
   updateArticlesById,
+  deleteArticleById,
+  selectComments,
   selectCommentsByArticleId,
   insertCommentsByArticleId,
   updateCommentById,

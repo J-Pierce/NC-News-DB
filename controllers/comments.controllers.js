@@ -1,9 +1,20 @@
 const {
+  selectComments,
   selectCommentsByArticleId,
   insertCommentsByArticleId,
   updateCommentById,
   deleteCommentById,
 } = require("../models/index.models");
+
+exports.getComments = (request, response, next) => {
+  return selectComments()
+    .then(({ rows }) => {
+      return response.status(200).send({ comments: rows });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
 
 exports.getCommentsByArticleId = (request, response, next) => {
   const article_id = request.params.article_id;

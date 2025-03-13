@@ -1,6 +1,10 @@
 const db = require("../db/connection");
 const { checkExists } = require("./utils.models");
 
+exports.selectComments = () => {
+  return db.query("SELECT * FROM comments");
+};
+
 exports.selectCommentsByArticleId = (article_id, limit = 10, p = 0, rest) => {
   const promises = [];
 
