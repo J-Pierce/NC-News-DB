@@ -36,20 +36,88 @@ describe("\nGET /api", () => {
       });
   });
 });
-describe("\nGET: /api/topics", () => {
-  test("200: When no query given, responds with the topics objects containing all topics with each topic having the correct properties", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body }) => {
-        const topics = body.topics;
-        expect(topics.length).toBe(3);
-        topics.forEach((topic) => {
-          const { slug, description } = topic;
-          expect(typeof slug).toBe("string");
-          expect(typeof description).toBe("string");
-        });
+describe("\n/api/topics", () => {
+  describe("GET:", () => {
+    describe("Functionality Tests", () => {
+      test("200: When no query given, responds with the topics objects containing all topics with each topic having the correct properties\n", () => {
+        return request(app)
+          .get("/api/topics")
+          .expect(200)
+          .then(({ body }) => {
+            const topics = body.topics;
+            expect(topics.length).toBe(3);
+            topics.forEach((topic) => {
+              const { slug, description } = topic;
+              expect(typeof slug).toBe("string");
+              expect(typeof description).toBe("string");
+            });
+          });
       });
+    });
+  });
+  describe("POST:", () => {
+    describe("Functionality Tests", () => {
+      test("201: When passed data for a topic, adds that topic to the topics table and returns data added", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({
+            slug: "sand",
+            description: "I HATE SAND",
+            img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(201)
+          .then(({ body }) => {
+            const topic = body.newTopic;
+            const { slug, description, img_url } = topic;
+            expect(slug).toBe("sand");
+            expect(description).toBe("I HATE SAND");
+            expect(img_url).toBe(
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg"
+            );
+          });
+      });
+      test("201: When unnecessary/extra properties are included, they are ignored from posting", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({
+            slug: "sand",
+            description: "I HATE SAND",
+            img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+            time: "now",
+            votes: 10,
+          })
+          .expect(201)
+          .then(({ body }) => {
+            const topic = body.newTopic;
+            const { slug, description, img_url, time, votes } = topic;
+            expect(slug).toBe("sand");
+            expect(description).toBe("I HATE SAND");
+            expect(img_url).toBe(
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg"
+            );
+            expect(votes).toBe(undefined);
+            expect(time).toBe(undefined);
+          });
+      });
+    });
+    describe("Error Tests", () => {
+      test("400: When not given a slug or description returns 'Bad Request'", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({
+            slug: "sand",
+            img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
   });
 });
 describe("\nGET: /api/users", () => {
@@ -270,7 +338,6 @@ describe("\n/api/articles\n", () => {
       });
     });
   });
-
   describe("POST:", () => {
     describe("Functionality Tests", () => {
       test("201: When passed data for an article, adds that article to the articles table and returns data added", () => {
@@ -321,6 +388,7 @@ describe("\n/api/articles\n", () => {
             topic: "paper",
             article_img_url:
               "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+            time: "now",
           })
           .expect(201)
           .then((data) => {
@@ -336,6 +404,7 @@ describe("\n/api/articles\n", () => {
               votes,
               created_at,
               comment_count,
+              time,
             } = article;
             expect(author).toBe("lurker");
             expect(title).toBe("Stationary");
@@ -348,6 +417,7 @@ describe("\n/api/articles\n", () => {
             expect(votes).toBe(0);
             expect(typeof created_at).toBe("string");
             expect(comment_count).toBe(0);
+            expect(time).toBe(undefined);
           });
       });
     });

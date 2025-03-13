@@ -10,6 +10,20 @@
       "exampleResponse": {
         "topics": [{ "slug": "football", "description": "Footie!" }]
       }
+    },
+    "POST": {
+      "description": "Adds a topic with the provided properties to the topics table",
+      "inputs": {
+        "slug": "topic name",
+        "description": "topic description"
+      },
+      "exampleResponse": {
+        "topic": {
+          "slug": "football",
+          "description": "Footie!",
+          "url": "https://t3.ftcdn.net/jpg/01/04/40/06/360_F_104400672_zCaPIFbYT1dXdzN85jso7NV8M6uwpKtf.jpg"
+        }
+      }
     }
   },
   "/api/users": {
