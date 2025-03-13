@@ -7,7 +7,8 @@ const {
 
 exports.getCommentsByArticleId = (request, response, next) => {
   const article_id = request.params.article_id;
-  return selectCommentsByArticleId(article_id)
+  const { limit, p, ...rest } = request.query;
+  return selectCommentsByArticleId(article_id, limit, p, rest)
     .then(({ rows }) => {
       response.status(200).send({ comments: rows });
     })

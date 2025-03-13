@@ -684,6 +684,33 @@ describe("\n/api/articles/:article_id/comments:\n", () => {
             expect(comments.length).toBe(0);
           });
       });
+      test("200: When limit query given, responds with comments array containing as many comments as limit provided", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=5")
+          .expect(200)
+          .then(({ body }) => {
+            const comments = body.comments;
+            expect(comments.length).toBe(5);
+          });
+      });
+      test("200: When p query given, responds with comments array containing comments in: [ p*limit , (p+1)*limSit )", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=2&&p=2")
+          .expect(200)
+          .then(({ body }) => {
+            const comments = body.comments;
+            expect(comments.length).toBe(2);
+          });
+      });
+      test("200: When p query given is past than all comments, responds with an empty array", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=2&&p=100")
+          .expect(200)
+          .then(({ body }) => {
+            const comments = body.comments;
+            expect(comments.length).toBe(0);
+          });
+      });
     });
     describe("Error Tests", () => {
       test("404: When given an article id that is not in the articles table, returns 'Resource Not Found'", () => {
