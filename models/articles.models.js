@@ -2,7 +2,14 @@ const db = require("../db/connection");
 const format = require("pg-format");
 const { checkExists } = require("./utils.models");
 
-exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
+exports.selectArticles = (
+  sort = "created_at",
+  order = "DESC",
+  topic,
+  limit = 10,
+  p = 0,
+  rest
+) => {
   const whiteListSort = [
     "title",
     "topic",
@@ -11,9 +18,19 @@ exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
     "votes",
     "article_img_url",
     "comment_count",
+    "article_id",
   ];
   const whiteListOrder = ["ASC", "DESC"];
   const promises = [];
+
+  function makeCounter() {
+    let count = 0;
+    function innerCounter() {
+      return ++count;
+    }
+    return innerCounter;
+  }
+  const counter = makeCounter();
 
   // check sort queries are valid
   if (
@@ -32,7 +49,7 @@ exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
   // Augment by WHERE queries
   if (topic) {
     promises.push(checkExists("topics", "slug", topic));
-    queryStr += " WHERE articles.topic = $1";
+    queryStr += ` WHERE articles.topic = $${counter()}`;
     queryValues.push(topic);
   }
 
@@ -41,6 +58,11 @@ exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
 
   // Augment by ORDER BY queries
   queryStr += format(" ORDER BY %I ", sort) + order;
+
+  // Augment by LIMIT queries
+  queryStr += ` LIMIT $${counter()} OFFSET $${counter()}`;
+  queryValues.push(limit);
+  queryValues.push(p * limit);
 
   // Return query
   promises.unshift(db.query(queryStr, queryValues));

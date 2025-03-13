@@ -109,7 +109,7 @@ describe("\n/api/articles\n", () => {
           .expect(200)
           .then(({ body }) => {
             const articles = body.articles;
-            expect(articles.length).toBe(13);
+            expect(articles.length).toBe(10);
             articles.forEach((article) => {
               const {
                 author,
@@ -143,6 +143,15 @@ describe("\n/api/articles\n", () => {
             });
           });
       });
+      test("Returned array default article limit 10", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles.length).toBe(10);
+          });
+      });
       test("200: When sort_by and order queries given, responds with the aricles objects containing all articles listed in the specified sort in the specified order", () => {
         return request(app)
           .get("/api/articles?sort_by=title&&order=ASC")
@@ -158,7 +167,7 @@ describe("\n/api/articles\n", () => {
           .expect(200)
           .then(({ body }) => {
             const articles = body.articles;
-            expect(articles.length).toBe(12);
+            expect(articles.length).toBe(10);
             articles.forEach((article) => {
               expect(article.topic).toBe("mitch");
             });
@@ -167,6 +176,36 @@ describe("\n/api/articles\n", () => {
       test("200: When topic query given, responds with empty array if the specified topic exists but no articles reference it", () => {
         return request(app)
           .get("/api/articles?topic=paper")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles.length).toBe(0);
+          });
+      });
+      test("200: When limit query given, responds with articles array containing as many articles as limit provided", () => {
+        return request(app)
+          .get("/api/articles?limit=5")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles.length).toBe(5);
+          });
+      });
+      test("200: When p query given, responds with articles array containing articles in: [ p*limit , (p+1)*limit )", () => {
+        return request(app)
+          .get("/api/articles?sort_by=article_id&&order=ASC&&limit=3&&p=2")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+            expect(articles.length).toBe(3);
+            articles.forEach((article) => {
+              expect([7, 8, 9].includes(article.article_id)).toBe(true);
+            });
+          });
+      });
+      test("200: When p query given is past than all articles, responds with an empty array", () => {
+        return request(app)
+          .get("/api/articles?sort_by=article_id&&order=ASC&&limit=3&&p=20")
           .expect(200)
           .then(({ body }) => {
             const articles = body.articles;
@@ -202,7 +241,7 @@ describe("\n/api/articles\n", () => {
             expect(msg).toBe("Bad Request");
           });
       });
-      test("404: When topic queried with non-existing topic, returns 'Resource Not Found'", () => {
+      test("404: When topic queried with non-existing topic, returns 'Resource Not Found'\n", () => {
         return request(app)
           .get("/api/articles?topic=nonsense")
           .expect(404)
@@ -211,8 +250,27 @@ describe("\n/api/articles\n", () => {
             expect(msg).toBe("Resource Not Found");
           });
       });
+      test("400: When limit queried with an invalid amount, returns 'Bad Request'", () => {
+        return request(app)
+          .get("/api/articles?limit=nonsense")
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("400: When p queried with an invalid amount, returns 'Bad Request'", () => {
+        return request(app)
+          .get("/api/articles?p=nonsense")
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
     });
   });
+
   describe("POST:", () => {
     describe("Functionality Tests", () => {
       test("201: When passed data for an article, adds that article to the articles table and returns data added", () => {
