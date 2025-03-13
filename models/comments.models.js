@@ -1,15 +1,28 @@
 const db = require("../db/connection");
 const { checkExists } = require("./utils.models");
 
-exports.selectCommentsByArticleId = (article_id) => {
+exports.selectCommentsByArticleId = (article_id, limit = 10, p = 0, rest) => {
   const promises = [];
+
+  // check sort queries are valid
+  if (Object.keys(rest).length > 0) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
   promises.push(checkExists("articles", "article_id", article_id));
-  promises.unshift(
-    db.query(
-      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC",
-      [article_id]
-    )
-  );
+
+  // Default string
+  const queryValues = [];
+  let queryStr =
+    "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC";
+  queryValues.push(article_id);
+
+  // Augment by LIMIT queries
+  queryStr += " LIMIT $2 OFFSET $3";
+  queryValues.push(limit);
+  queryValues.push(p * limit);
+
+  promises.unshift(db.query(queryStr, queryValues));
   return Promise.all(promises).then((data) => {
     return data[0];
   });
