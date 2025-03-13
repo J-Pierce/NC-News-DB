@@ -73,6 +73,19 @@
           }
         ]
       }
+    },
+    "POST": {
+      "description": "Adds an article with the provided properties to the articles table",
+      "inputs": {
+        "author": "author name",
+        "title": "article title",
+        "body": "text of article",
+        "topic": "article topic",
+        "article_img_url": " article image url - will default if not provided"
+      },
+      "exampleResponse": {
+        "article": {}
+      }
     }
   },
   "/api/articles/:article_id": {

@@ -48,6 +48,31 @@ exports.selectArticles = (sort = "created_at", order = "DESC", topic, rest) => {
     return data[0];
   });
 };
+exports.insertArticle = (
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = "https://t3.ftcdn.net/jpg/01/04/40/06/360_F_104400672_zCaPIFbYT1dXdzN85jso7NV8M6uwpKtf.jpg"
+) => {
+  const votes = 0;
+  const created_at = new Date(Date.now());
+
+  const promises = [];
+  promises.push(checkExists("topics", "slug", topic));
+  promises.push(checkExists("users", "username", author));
+
+  promises.unshift(
+    db.query(
+      "INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+      [title, topic, author, body, created_at, votes, article_img_url]
+    )
+  );
+  return Promise.all(promises).then((data) => {
+    data[0].rows[0].comment_count = 0;
+    return data[0];
+  });
+};
 exports.selectArticleById = (article_id) => {
   const promises = [];
   promises.push(checkExists("articles", "article_id", article_id));

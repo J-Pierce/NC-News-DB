@@ -2,6 +2,7 @@ const { selectTopics } = require("./topics.models");
 const { selectUsers, selectUserByUsername } = require("./users.models");
 const {
   selectArticles,
+  insertArticle,
   selectArticleById,
   updateArticlesById,
 } = require("./articles.models");
@@ -17,6 +18,7 @@ module.exports = {
   selectUsers,
   selectUserByUsername,
   selectArticles,
+  insertArticle,
   selectArticleById,
   updateArticlesById,
   selectCommentsByArticleId,

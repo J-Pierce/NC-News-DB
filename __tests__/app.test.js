@@ -213,6 +213,156 @@ describe("\n/api/articles\n", () => {
       });
     });
   });
+  describe("POST:", () => {
+    describe("Functionality Tests", () => {
+      test("201: When passed data for an article, adds that article to the articles table and returns data added", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "lurker",
+            title: "Stationary",
+            body: "I like paper!",
+            topic: "paper",
+            article_img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(201)
+          .then((data) => {
+            const article = data.body.newArticle;
+            const {
+              author,
+              title,
+              body,
+              topic,
+              article_img_url,
+              article_id,
+              votes,
+              created_at,
+              comment_count,
+            } = article;
+            expect(author).toBe("lurker");
+            expect(title).toBe("Stationary");
+            expect(body).toBe("I like paper!");
+            expect(topic).toBe("paper");
+            expect(article_img_url).toBe(
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg"
+            );
+            expect(article_id).toBe(14);
+            expect(votes).toBe(0);
+            expect(typeof created_at).toBe("string");
+            expect(comment_count).toBe(0);
+          });
+      });
+      test("201: When unnecessary/extra properties are included, they are ignored from posting", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "lurker",
+            title: "Stationary",
+            body: "I like paper!",
+            topic: "paper",
+            article_img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(201)
+          .then((data) => {
+            const article = data.body.newArticle;
+
+            const {
+              author,
+              title,
+              body,
+              topic,
+              article_img_url,
+              article_id,
+              votes,
+              created_at,
+              comment_count,
+            } = article;
+            expect(author).toBe("lurker");
+            expect(title).toBe("Stationary");
+            expect(body).toBe("I like paper!");
+            expect(topic).toBe("paper");
+            expect(article_img_url).toBe(
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg"
+            );
+            expect(article_id).toBe(14);
+            expect(votes).toBe(0);
+            expect(typeof created_at).toBe("string");
+            expect(comment_count).toBe(0);
+          });
+      });
+    });
+    describe("Error Tests", () => {
+      test("404: When given a topic that is not in the topics table, returns 'Resource Not Found'", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "lurker",
+            title: "Stationary",
+            body: "I like paper!",
+            topic: "glue",
+            article_img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Resource Not Found");
+          });
+      });
+      test("404: When given an author that is not in the users table, returns 'Resource Not Found'", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "james",
+            title: "Stationary",
+            body: "I like paper!",
+            topic: "paper",
+            article_img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Resource Not Found");
+          });
+      });
+      test("400: When given an author that is of an incorrect data type, returns 'Bad Request'", () => {
+        return request(app)
+          .post("/api/articles/nonsense/comments")
+          .send({
+            author: 10,
+            title: "Stationary",
+            body: "I like paper!",
+            topic: "paper",
+            article_img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("400: When not given author, title, body, or topic, returns 'Bad Request'", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "lurker",
+            body: "I like paper!",
+            topic: "paper",
+            article_img_url:
+              "https://res.cloudinary.com/env-imgs/images/f_auto/shopimages/products/1200/white-card/.jpg",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).toBe("Bad Request");
+          });
+      });
+    });
+  });
 });
 describe("\n/api/articles/:article_id:\n", () => {
   describe("GET:", () => {
@@ -593,7 +743,7 @@ describe("\n/api/articles/:article_id/comments:\n", () => {
             expect(msg).toBe("Resource Not Found");
           });
       });
-      test("400: When not given username or body, returns 'Bad Request'", () => {
+      test("404: When not given username or body, returns ''Resource Not Found'", () => {
         return request(app)
           .post("/api/articles/4/comments")
           .send({

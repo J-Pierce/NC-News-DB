@@ -57,7 +57,7 @@ For the server to run correctly using the correct data you need to create the fo
 
 ### Modules:
 
-The minimum versions of modules needed to run the project:
+The minimum recommended versions of modules needed to run the project:
 
     Node.js     v23.7.0
     Postgres    v8.13.3
