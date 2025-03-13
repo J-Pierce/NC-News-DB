@@ -1,5 +1,6 @@
 const {
   selectArticles,
+  insertArticle,
   selectArticleById,
   updateArticlesById,
 } = require("../models/index.models");
@@ -9,6 +10,16 @@ exports.getArticles = (request, response, next) => {
   return selectArticles(sort_by, order, topic, rest)
     .then(({ rows }) => {
       response.status(200).send({ articles: rows });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+exports.postArticle = (request, response, next) => {
+  const { author, title, body, topic, article_img_url } = request.body;
+  insertArticle(author, title, body, topic, article_img_url)
+    .then(({ rows }) => {
+      response.status(201).send({ newArticle: rows[0] });
     })
     .catch((error) => {
       next(error);

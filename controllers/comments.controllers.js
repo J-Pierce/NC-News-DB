@@ -26,7 +26,6 @@ exports.postCommentsByArticleId = (request, response, next) => {
       next(error);
     });
 };
-
 exports.patchCommentById = (request, response, next) => {
   const { comment_id } = request.params;
   const { inc_votes } = request.body;

@@ -8,6 +8,7 @@ const { getTopics } = require("./topics.controllers");
 const { getUsers, getUserByUsername } = require("./users.controllers");
 const {
   getArticles,
+  postArticle,
   getArticleById,
   patchArticleById,
 } = require("./articles.controllers");
@@ -28,6 +29,7 @@ module.exports = {
   getUsers,
   getUserByUsername,
   getArticles,
+  postArticle,
   getArticleById,
   patchArticleById,
   getCommentsByArticleId,
